@@ -12,20 +12,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("../../user/user.service");
 const error_handler_1 = require("../../../helpers/error-handler");
-const otp_service_1 = require("./otp.service");
+const jwt_1 = require("@nestjs/jwt");
+const config_1 = require("@nestjs/config");
 let AuthService = class AuthService {
-    constructor(userService, otpService, errorHandler) {
+    constructor(userService, jwtService, configService) {
         this.userService = userService;
-        this.otpService = otpService;
-        this.errorHandler = errorHandler;
+        this.jwtService = jwtService;
+        this.configService = configService;
     }
     async signup(payload) {
         try {
             const user = await this.userService.create({ ...payload });
-            return user;
+            delete user.encrypted_password;
+            delete user.password;
+            const access_token = this.jwtService.sign({ id: user.id, email: user.email }, { secret: this.configService.get("secret") });
+            return { access_token, user };
         }
         catch (error) {
-            throw this.errorHandler.handleError("UnprocessableEntityException", error, new Error(error.message));
+            if (error.code == "23505")
+                throw error_handler_1.default.handleError("BadRequestException", {
+                    message: "Sorry, this email has already been used.",
+                });
+            throw error_handler_1.default.handleError("UnprocessableEntityException", error, new Error(error.message));
         }
     }
     async signin(payload) {
@@ -37,8 +45,8 @@ let AuthService = class AuthService {
 AuthService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [user_service_1.UserService,
-        otp_service_1.default,
-        error_handler_1.default])
+        jwt_1.JwtService,
+        config_1.ConfigService])
 ], AuthService);
 exports.default = AuthService;
 //# sourceMappingURL=auth.service.js.map

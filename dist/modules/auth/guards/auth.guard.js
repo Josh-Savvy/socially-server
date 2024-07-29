@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const typeorm_1 = require("@nestjs/typeorm");
+const error_handler_1 = require("../../../helpers/error-handler");
 const user_entity_1 = require("../../user/entities/user.entity");
 const typeorm_2 = require("typeorm");
 let AuthGuard = class AuthGuard {
@@ -29,21 +30,22 @@ let AuthGuard = class AuthGuard {
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
         if (!token)
-            throw new common_1.UnauthorizedException("Unauthorized");
+            throw error_handler_1.default.handleError("UnauthorizedException", { message: "Error validating auth token" });
         try {
             const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get("secret") });
             const user = payload;
             const userExist = await this.userRepo.findOne({
                 where: [{ id: user.id }, { email: user.email }],
-                relations: ["business"],
+                relations: ["posts", "notifications", "stories", "followers"],
             });
             if (!userExist)
-                throw new common_1.UnauthorizedException("Unauthorized");
+                throw error_handler_1.default.handleError("UnauthorizedException", { message: "Unauthorized" });
             delete userExist.encrypted_password;
             request["user"] = userExist;
         }
-        catch {
-            throw new common_1.UnauthorizedException("Unauthorized");
+        catch (err) {
+            console.log({ err });
+            throw error_handler_1.default.handleError("UnauthorizedException", err);
         }
         return true;
     }

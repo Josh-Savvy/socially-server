@@ -22,6 +22,12 @@ export class User extends Repository<User> {
 	email: string;
 	@Column()
 	username: string;
+	@Column()
+	first_name: string;
+	@Column()
+	last_name: string;
+	@Column()
+	gender: string;
 
 	@Column({ nullable: true })
 	avatar: string | null;

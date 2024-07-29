@@ -1,12 +1,9 @@
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UserService } from "./user.service";
+import { JwtUser } from "../auth/guards/auth.guard";
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
-    create(createUserDto: CreateUserDto): Promise<string>;
-    findAll(): string;
-    findOne(id: string): string;
-    update(id: string, updateUserDto: UpdateUserDto): string;
-    remove(id: string): string;
+    profile(req: Request & {
+        user: JwtUser;
+    }): Promise<JwtUser>;
 }

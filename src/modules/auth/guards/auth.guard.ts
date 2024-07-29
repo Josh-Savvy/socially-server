@@ -4,6 +4,7 @@ import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Request } from "express";
 import { JwtConfig } from "src/config/jwt.config";
+import ErrorHandler from "src/helpers/error-handler";
 import { User } from "src/modules/user/entities/user.entity";
 import { Repository } from "typeorm";
 
@@ -20,21 +21,21 @@ export class AuthGuard implements CanActivate {
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest();
 		const token = this.extractTokenFromHeader(request);
-		if (!token) throw new UnauthorizedException("Unauthorized");
+		if (!token) throw ErrorHandler.handleError("UnauthorizedException", { message: "Error validating auth token" });
 		try {
 			const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get("secret") });
-
 			const user = payload as JwtUser;
 			const userExist = await this.userRepo.findOne({
 				where: [{ id: user.id }, { email: user.email }],
-				relations: ["business"],
+				relations: ["posts", "notifications", "stories", "followers"],
 			});
 			// Todo: cache user not found error
-			if (!userExist) throw new UnauthorizedException("Unauthorized");
+			if (!userExist) throw ErrorHandler.handleError("UnauthorizedException", { message: "Unauthorized" });
 			delete userExist.encrypted_password;
 			request["user"] = userExist;
-		} catch {
-			throw new UnauthorizedException("Unauthorized");
+		} catch (err) {
+			console.log({ err });
+			throw ErrorHandler.handleError("UnauthorizedException", err);
 		}
 		return true;
 	}
@@ -45,4 +46,4 @@ export class AuthGuard implements CanActivate {
 	}
 }
 
-export type JwtUser = Pick<User, 'id' | 'email'>;
+export type JwtUser = Pick<User, "id" | "email">;

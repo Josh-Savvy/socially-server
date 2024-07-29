@@ -12,4 +12,4 @@ export declare class AuthGuard implements CanActivate {
     canActivate(context: ExecutionContext): Promise<boolean>;
     private extractTokenFromHeader;
 }
-export type JwtUser = Pick<User, 'id' | 'email'>;
+export type JwtUser = Pick<User, "id" | "email">;

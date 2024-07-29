@@ -61,13 +61,4 @@ export class AuthController {
 	async signin(@Body() input: SignInDto) {
 		return await this.authService.signin(input);
 	}
-
-	@UseGuards(AuthGuard)
-	@Get()
-	async profile(@Req() req: Request & { user: JwtUser }) {
-		return req?.user;
-	}
-
-	// Todo: forgot password
-	// Todo: reset password
 }

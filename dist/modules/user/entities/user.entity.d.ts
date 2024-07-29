@@ -7,6 +7,9 @@ export declare class User extends Repository<User> {
     id: number;
     email: string;
     username: string;
+    first_name: string;
+    last_name: string;
+    gender: string;
     avatar: string | null;
     bio: string | null;
     job_title: string | null;

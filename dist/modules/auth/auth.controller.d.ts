@@ -1,7 +1,5 @@
 import { HttpStatus } from "@nestjs/common";
 import { SignUpDto, SignInDto } from "./dto/auth.dto";
-import { type JwtUser } from "./guards/auth.guard";
-import { Request } from "express";
 import AuthService from "./services/auth.service";
 import OtpService from "./services/otp.service";
 export declare class AuthController {
@@ -22,12 +20,22 @@ export declare class AuthController {
         message: string;
         status: HttpStatus;
     }>;
-    signup(input: SignUpDto): Promise<string>;
+    signup(input: SignUpDto): Promise<{
+        access_token: string;
+        user: {
+            encrypted_password: string;
+            username: string;
+            first_name: string;
+            last_name: string;
+            email: string;
+            password: string;
+            gender: string;
+            job_title?: string;
+            bio?: string;
+        } & import("../user/entities/user.entity").User;
+    }>;
     signin(input: SignInDto): Promise<{
         email: string;
         password: string;
     }>;
-    profile(req: Request & {
-        user: JwtUser;
-    }): Promise<JwtUser>;
 }
