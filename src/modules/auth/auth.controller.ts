@@ -25,28 +25,14 @@ export class AuthController {
 	@UsePipes(new IdentityVerificationPipe())
 	@HttpCode(HttpStatus.OK)
 	async sendIdentityVerification(@Body() body: { email: string }) {
-		try {
-			return await this.otpService.sendOtp({ identifier: body.email, type: "email" });
-		} catch (error) {
-			throw ErrorHandler.handleError("UnprocessableEntityException", error, new Error());
-		}
+		return await this.authService.sendVerification(body);
 	}
 
 	@Post("/confirm-identity")
 	@UsePipes(new ConfirmIdentityPipe())
 	@HttpCode(HttpStatus.OK)
 	async confirmIdentity(@Body() body: { email: string; otp: string }) {
-		try {
-			const valid = await this.otpService.verifyOtp({
-				identifier: body.email,
-				value: body.otp,
-				type: "email",
-			});
-			if (!valid) throw ErrorHandler.handleError("BadRequestException", { message: "Invalid or Expired OTP" });
-			return { message: "Identity confirmed successfully", status: HttpStatus.OK };
-		} catch (error) {
-			throw ErrorHandler.handleError("UnprocessableEntityException", error, new Error());
-		}
+		return await this.authService.confirmVerification(body)
 	}
 
 	@Post("/signup")

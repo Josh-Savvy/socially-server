@@ -17,34 +17,16 @@ const common_1 = require("@nestjs/common");
 const auth_dto_1 = require("./dto/auth.dto");
 const auth_service_1 = require("./services/auth.service");
 const otp_service_1 = require("./services/otp.service");
-const error_handler_1 = require("../../helpers/error-handler");
 let AuthController = class AuthController {
     constructor(authService, otpService) {
         this.authService = authService;
         this.otpService = otpService;
     }
     async sendIdentityVerification(body) {
-        try {
-            return await this.otpService.sendOtp({ identifier: body.email, type: "email" });
-        }
-        catch (error) {
-            throw error_handler_1.default.handleError("UnprocessableEntityException", error, new Error());
-        }
+        return await this.authService.sendVerification(body);
     }
     async confirmIdentity(body) {
-        try {
-            const valid = await this.otpService.verifyOtp({
-                identifier: body.email,
-                value: body.otp,
-                type: "email",
-            });
-            if (!valid)
-                throw error_handler_1.default.handleError("BadRequestException", { message: "Invalid or Expired OTP" });
-            return { message: "Identity confirmed successfully", status: common_1.HttpStatus.OK };
-        }
-        catch (error) {
-            throw error_handler_1.default.handleError("UnprocessableEntityException", error, new Error());
-        }
+        return await this.authService.confirmVerification(body);
     }
     async signup(input) {
         return await this.authService.signup(input);

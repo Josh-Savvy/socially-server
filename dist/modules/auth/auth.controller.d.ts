@@ -9,7 +9,6 @@ export declare class AuthController {
     sendIdentityVerification(body: {
         email: string;
     }): Promise<{
-        otp: string;
         expiry: Date;
         message: string;
     }>;

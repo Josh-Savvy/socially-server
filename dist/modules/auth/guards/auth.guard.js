@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthGuard = void 0;
+const cache_manager_1 = require("@nestjs/cache-manager");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
@@ -21,14 +22,17 @@ const error_handler_1 = require("../../../helpers/error-handler");
 const user_entity_1 = require("../../user/entities/user.entity");
 const typeorm_2 = require("typeorm");
 let AuthGuard = class AuthGuard {
-    constructor(jwtService, configService, userRepo) {
+    constructor(jwtService, configService, userRepo, cache) {
         this.jwtService = jwtService;
         this.configService = configService;
         this.userRepo = userRepo;
+        this.cache = cache;
     }
     async canActivate(context) {
         const request = context.switchToHttp().getRequest();
-        const token = this.extractTokenFromHeader(request);
+        let token = await this.cache.get("access_token");
+        if (!token)
+            token = this.extractTokenFromHeader(request);
         if (!token)
             throw error_handler_1.default.handleError("UnauthorizedException", { message: "Error validating auth token" });
         try {
@@ -38,8 +42,10 @@ let AuthGuard = class AuthGuard {
                 where: [{ id: user.id }, { email: user.email }],
                 relations: ["posts", "notifications", "stories", "followers"],
             });
-            if (!userExist)
+            if (!userExist) {
+                await this.cache.set(`user_not_found_${user.email}`, "User not found", 82400);
                 throw error_handler_1.default.handleError("UnauthorizedException", { message: "Unauthorized" });
+            }
             delete userExist.encrypted_password;
             request["user"] = userExist;
         }
@@ -59,8 +65,9 @@ exports.AuthGuard = AuthGuard = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Injectable)(),
     __param(2, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __param(3, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
     __metadata("design:paramtypes", [jwt_1.JwtService,
         config_1.ConfigService,
-        typeorm_2.Repository])
+        typeorm_2.Repository, Object])
 ], AuthGuard);
 //# sourceMappingURL=auth.guard.js.map

@@ -30,6 +30,7 @@ const story_entity_1 = require("./modules/story/entities/story.entity");
 const post_reaction_entity_1 = require("./modules/posts/entities/post-reaction.entity");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
 const notification_entity_1 = require("./modules/notifications/entities/notification.entity");
+const cache_manager_1 = require("@nestjs/cache-manager");
 let AppModule = class AppModule {
     constructor() { }
 };
@@ -58,6 +59,9 @@ AppModule = __decorate([
                     const secret = config.get("secret");
                     return { global: true, secret, signOptions: { expiresIn: "7d" } };
                 },
+            }),
+            cache_manager_1.CacheModule.register({
+                isGlobal: true,
             }),
             user_module_1.UserModule,
             auth_module_1.AuthModule,
