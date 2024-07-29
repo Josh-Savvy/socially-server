@@ -1,3 +1,4 @@
+import { HttpStatus } from "@nestjs/common";
 import { SignUpDto, SignInDto } from "./dto/auth.dto";
 import { type JwtUser } from "./guards/auth.guard";
 import { Request } from "express";
@@ -17,7 +18,10 @@ export declare class AuthController {
     confirmIdentity(body: {
         email: string;
         otp: string;
-    }): Promise<void>;
+    }): Promise<{
+        message: string;
+        status: HttpStatus;
+    }>;
     signup(input: SignUpDto): Promise<string>;
     signin(input: SignInDto): Promise<{
         email: string;

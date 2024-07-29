@@ -34,11 +34,14 @@ let AuthController = class AuthController {
     }
     async confirmIdentity(body) {
         try {
-            return await this.otpService.verifyOtp({
+            const valid = await this.otpService.verifyOtp({
                 identifier: body.email,
                 value: body.otp,
                 type: "email",
             });
+            if (!valid)
+                throw error_handler_1.default.handleError("BadRequestException", { message: "Invalid or Expired OTP" });
+            return { message: "Identity confirmed successfully", status: common_1.HttpStatus.OK };
         }
         catch (error) {
             throw error_handler_1.default.handleError("UnprocessableEntityException", error, new Error());
@@ -58,6 +61,7 @@ exports.AuthController = AuthController;
 __decorate([
     (0, common_1.Post)("/send-identity-verification"),
     (0, common_1.UsePipes)(new auth_dto_1.IdentityVerificationPipe()),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -66,6 +70,7 @@ __decorate([
 __decorate([
     (0, common_1.Post)("/confirm-identity"),
     (0, common_1.UsePipes)(new auth_dto_1.ConfirmIdentityPipe()),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -74,6 +79,7 @@ __decorate([
 __decorate([
     (0, common_1.Post)("/signup"),
     (0, common_1.UsePipes)(new auth_dto_1.SignupValidationPipe()),
+    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [auth_dto_1.SignUpDto]),

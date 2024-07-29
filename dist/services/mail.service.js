@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 let MailService = class MailService {
     async send(input) {
-        console.log();
+        console.log({ input });
     }
 };
 MailService = __decorate([

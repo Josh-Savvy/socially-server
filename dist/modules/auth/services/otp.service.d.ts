@@ -21,5 +21,5 @@ export default class OtpService {
         type?: "email" | "sms";
         identifier: string;
         value: string;
-    }): Promise<void>;
+    }): Promise<boolean>;
 }

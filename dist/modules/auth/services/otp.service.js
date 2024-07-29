@@ -36,10 +36,11 @@ let OtpService = OtpService_1 = class OtpService {
         try {
             let auth = await this.authRepo.findOne({ where: { identifier, type } });
             if (!auth)
-                auth = this.authRepo.create({ identifier, type, otp: OtpService_1.generateOtp() });
+                auth = this.authRepo.create({ identifier, type });
             const currentDate = new Date();
             currentDate.setMinutes(currentDate.getMinutes() + 30);
             auth.expiry = currentDate;
+            auth.otp = OtpService_1.generateOtp();
             if (type === "sms")
                 await this.smsService.sendSms(auth.identifier);
             else if (type === "email")
@@ -66,10 +67,10 @@ let OtpService = OtpService_1 = class OtpService {
                 });
         }
         const auth = await this.authRepo.findOne({ where: { identifier, type, otp } });
-        if (!auth)
-            throw error_handler_1.default.handleError("BadRequestException", { message: "Invalid or Expired OTP" });
-        if ((0, date_fns_1.isPast)(new Date(auth.expiry)))
-            throw error_handler_1.default.handleError("BadRequestException", { message: "Invalid or Expired OTP" });
+        if (!auth || (0, date_fns_1.isPast)(new Date(auth.expiry)))
+            return false;
+        await this.authRepo.delete(auth.identifier);
+        return true;
     }
 };
 OtpService = OtpService_1 = __decorate([

@@ -26,13 +26,14 @@ export default class OtpService {
 		const { identifier, type } = input;
 		try {
 			let auth = await this.authRepo.findOne({ where: { identifier, type } });
-			if (!auth) auth = this.authRepo.create({ identifier, type, otp: OtpService.generateOtp() });
+			if (!auth) auth = this.authRepo.create({ identifier, type });
 			const currentDate = new Date();
 			currentDate.setMinutes(currentDate.getMinutes() + 30); // Expiry time is 30 minutes from currentDate
 			auth.expiry = currentDate;
+			auth.otp = OtpService.generateOtp();
 			if (type === "sms") await this.smsService.sendSms(auth.identifier);
 			else if (type === "email") await this.mailService.send({ email: identifier, message: "" });
-			await this.authRepo.save(auth)
+			await this.authRepo.save(auth);
 			return { otp: auth.otp, expiry: auth.expiry, message: `OTP sent successfully to ${identifier}` };
 		} catch (error) {
 			throw ErrorHandler.handleError("UnprocessableEntityException", error, new Error(error.message));
@@ -53,10 +54,9 @@ export default class OtpService {
 					message: error.details[0]?.message.split('"').join(""),
 				});
 		}
-
 		const auth = await this.authRepo.findOne({ where: { identifier, type, otp } });
-		if (!auth) throw ErrorHandler.handleError("BadRequestException", { message: "Invalid or Expired OTP" });
-		if (isPast(new Date(auth.expiry)))
-			throw ErrorHandler.handleError("BadRequestException", { message: "Invalid or Expired OTP" });
+		if (!auth || isPast(new Date(auth.expiry))) return false;
+		await this.authRepo.delete(auth.identifier);
+		return true;
 	}
 }
