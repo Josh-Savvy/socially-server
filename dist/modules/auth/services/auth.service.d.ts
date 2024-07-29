@@ -1,13 +1,15 @@
-import { SignInDto, SignUpDto } from "../dto/sign-up.dto";
+import { SignInDto, SignUpDto } from "../dto/auth.dto";
+import { UserService } from "src/modules/user/user.service";
+import ErrorHandler from "src/helpers/error-handler";
+import OtpService from "./otp.service";
 export default class AuthService {
-    constructor();
-    signup(input: SignUpDto): Promise<{
-        first_name: string;
-        last_name: string;
-        email: string;
-        password: string;
-    }>;
-    signin(input: SignInDto): Promise<{
+    private readonly userService;
+    private readonly otpService;
+    private errorHandler;
+    constructor(userService: UserService, otpService: OtpService, errorHandler: ErrorHandler);
+    signup(payload: SignUpDto): Promise<string>;
+    async: any;
+    signin(payload: SignInDto): Promise<{
         email: string;
         password: string;
     }>;

@@ -17,7 +17,6 @@ import { Comment } from "./modules/comments/entities/comment.entity";
 import { StoryModule } from "./modules/story/story.module";
 import { Story } from "./modules/story/entities/story.entity";
 import { PostReaction } from "./modules/posts/entities/post-reaction.entity";
-import { NotificaionsModule } from './modules/notificaions/notificaions.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { Notification } from "./modules/notifications/entities/notification.entity";
 
@@ -52,7 +51,6 @@ import { Notification } from "./modules/notifications/entities/notification.enti
 		PostsModule,
 		CommentsModule,
 		StoryModule,
-		NotificaionsModule,
 		NotificationsModule,
 	],
 	controllers: [AppController],

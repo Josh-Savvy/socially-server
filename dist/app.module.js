@@ -28,7 +28,6 @@ const comment_entity_1 = require("./modules/comments/entities/comment.entity");
 const story_module_1 = require("./modules/story/story.module");
 const story_entity_1 = require("./modules/story/entities/story.entity");
 const post_reaction_entity_1 = require("./modules/posts/entities/post-reaction.entity");
-const notificaions_module_1 = require("./modules/notificaions/notificaions.module");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
 const notification_entity_1 = require("./modules/notifications/entities/notification.entity");
 let AppModule = class AppModule {
@@ -65,7 +64,6 @@ AppModule = __decorate([
             posts_module_1.PostsModule,
             comments_module_1.CommentsModule,
             story_module_1.StoryModule,
-            notificaions_module_1.NotificaionsModule,
             notifications_module_1.NotificationsModule,
         ],
         controllers: [app_controller_1.AppController],

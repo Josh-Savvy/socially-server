@@ -15,6 +15,11 @@ const user_module_1 = require("../user/user.module");
 const user_entity_1 = require("../user/entities/user.entity");
 const password_management_service_1 = require("./services/password-management.service");
 const auth_service_1 = require("./services/auth.service");
+const user_service_1 = require("../user/user.service");
+const error_handler_1 = require("../../helpers/error-handler");
+const otp_service_1 = require("./services/otp.service");
+const sms_service_1 = require("../../services/sms.service");
+const mail_service_1 = require("../../services/mail.service");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -22,7 +27,8 @@ exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([auth_entity_1.Auth, user_entity_1.User]), user_module_1.UserModule],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.default, password_management_service_1.default],
+        providers: [auth_service_1.default, password_management_service_1.default, user_service_1.UserService, error_handler_1.default, otp_service_1.default, sms_service_1.default, mail_service_1.default],
+        exports: [auth_service_1.default, password_management_service_1.default, otp_service_1.default],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

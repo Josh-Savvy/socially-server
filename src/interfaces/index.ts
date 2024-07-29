@@ -12,3 +12,5 @@ export class Photo {
 		this.id = randomUUID();
 	}
 }
+
+export type VerificationChannel = "email" | "sms";

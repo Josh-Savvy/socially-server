@@ -5,3 +5,4 @@ export declare class Photo {
     url: string;
     constructor(input: Photo);
 }
+export type VerificationChannel = "email" | "sms";

@@ -7,7 +7,8 @@ require("reflect-metadata");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.default);
     app.enableCors();
-    app.enableVersioning({ type: 0, prefix: "api" });
+    app.enableVersioning({ type: common_1.VersioningType.URI });
+    app.setGlobalPrefix("api");
     const PORT = parseInt(process.env.PORT) || 3000;
     const logger = new common_1.Logger("NestApplication");
     await app.listen(PORT).then(() => logger.log(`Application is running on port ${PORT}`));

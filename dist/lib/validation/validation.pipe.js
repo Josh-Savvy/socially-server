@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const common_1 = require("@nestjs/common");
+const error_handler_1 = require("../../helpers/error-handler");
 let ValidationPipe = class ValidationPipe {
     constructor(schema) {
         this.schema = schema;
@@ -22,8 +23,8 @@ let ValidationPipe = class ValidationPipe {
         if (error) {
             const errorMessage = error.details[0]?.message;
             if (!errorMessage)
-                throw new common_1.UnprocessableEntityException('Something went wrong');
-            throw new common_1.BadRequestException(errorMessage.split('"').join(''));
+                throw error_handler_1.default.handleError("UnprocessableEntityException", { message: "Something went wrong" });
+            throw error_handler_1.default.handleError("BadRequestException", { message: errorMessage.split('"').join("") });
         }
         return validatedValue;
     }

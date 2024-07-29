@@ -6,17 +6,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NotificaionsModule = void 0;
 const common_1 = require("@nestjs/common");
-const notificaions_service_1 = require("./notificaions.service");
-const notificaions_controller_1 = require("./notificaions.controller");
-let NotificaionsModule = class NotificaionsModule {
+let MailService = class MailService {
+    async send(input) {
+        console.log();
+    }
 };
-exports.NotificaionsModule = NotificaionsModule;
-exports.NotificaionsModule = NotificaionsModule = __decorate([
-    (0, common_1.Module)({
-        controllers: [notificaions_controller_1.NotificaionsController],
-        providers: [notificaions_service_1.NotificaionsService],
-    })
-], NotificaionsModule);
-//# sourceMappingURL=notificaions.module.js.map
+MailService = __decorate([
+    (0, common_1.Injectable)()
+], MailService);
+exports.default = MailService;
+//# sourceMappingURL=mail.service.js.map
