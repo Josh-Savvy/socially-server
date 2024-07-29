@@ -1,5 +1,4 @@
 import * as Joi from 'joi';
-import CreateClientDTO from 'src/modules/invoice/dto/create-client.dto';
 
 export const emailValidationSchema = Joi.string().trim().email().messages({
   'string.trim': 'email is required',
@@ -37,12 +36,6 @@ export const phoneNumberSchema = Joi.string().trim().optional().messages({
   'string.base': 'phone number is required',
 });
 
-export const clientObjectSchema = Joi.object<CreateClientDTO>({
-  email: emailValidationSchema.required(),
-  first_name: firstNameSchema.optional(),
-  last_name: lastNameSchema.optional(),
-  phone_number: phoneNumberSchema.optional(),
-});
 
 export const futureDateSchema = Joi.string()
   .trim()
