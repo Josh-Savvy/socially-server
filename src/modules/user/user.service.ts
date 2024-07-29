@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { FindOneOptions, Repository } from "typeorm";
 import { User } from "./entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SignUpDto } from "../auth/dto/auth.dto";
@@ -13,6 +13,14 @@ export class UserService {
 		@InjectRepository(User)
 		private readonly userRepo: Repository<User>,
 	) {}
+
+	async findone(where: { by: "email" | "id"; identifier: string; options?: Omit<FindOneOptions<User>, "where"> }) {
+		const { by, identifier, options } = where;
+		return await this.userRepo.findOne({
+			where: by === "email" ? { email: identifier } : { id: parseInt(identifier) },
+			...options,
+		});
+	}
 
 	async create(payload: SignUpDto) {
 		try {

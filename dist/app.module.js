@@ -56,7 +56,7 @@ AppModule = __decorate([
                 inject: [config_1.ConfigService],
                 useFactory: (config) => {
                     const secret = config.get("secret");
-                    return { global: true, secret, signOptions: { expiresIn: 86399 } };
+                    return { global: true, secret, signOptions: { expiresIn: "7d" } };
                 },
             }),
             user_module_1.UserModule,

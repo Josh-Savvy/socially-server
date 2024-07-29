@@ -43,7 +43,8 @@ import { Notification } from "./modules/notifications/entities/notification.enti
 			inject: [ConfigService],
 			useFactory: (config: ConfigService<JwtConfig>) => {
 				const secret = config.get("secret");
-				return { global: true, secret, signOptions: { expiresIn: 86399 } };
+				// return { global: true, secret, signOptions: { expiresIn: 86399 } };
+				return { global: true, secret, signOptions: { expiresIn: "7d" } };
 			},
 		}),
 		UserModule,

@@ -19,7 +19,7 @@ let PasswordManagementService = class PasswordManagementService {
         return bcrypt.hashSync(password, salt);
     }
     static async isValidPassword(encrypted, value) {
-        return bcrypt.compareSync(encrypted, value);
+        return bcrypt.compareSync(value, encrypted);
     }
 };
 PasswordManagementService = __decorate([

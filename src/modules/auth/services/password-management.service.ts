@@ -24,6 +24,6 @@ export default class PasswordManagementService {
 	 * @returns {boolean} True if the plain text password matches the encrypted password, false otherwise.
 	 */
 	static async isValidPassword(encrypted: string, value: string): Promise<boolean> {
-		return bcrypt.compareSync(encrypted, value);
+		return bcrypt.compareSync(value, encrypted);
 	}
 }

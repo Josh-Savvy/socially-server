@@ -23,6 +23,13 @@ let UserService = class UserService {
     constructor(userRepo) {
         this.userRepo = userRepo;
     }
+    async findone(where) {
+        const { by, identifier, options } = where;
+        return await this.userRepo.findOne({
+            where: by === "email" ? { email: identifier } : { id: parseInt(identifier) },
+            ...options,
+        });
+    }
     async create(payload) {
         try {
             return await this.userRepo.save({

@@ -14,6 +14,7 @@ const user_service_1 = require("../../user/user.service");
 const error_handler_1 = require("../../../helpers/error-handler");
 const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
+const password_management_service_1 = require("./password-management.service");
 let AuthService = class AuthService {
     constructor(userService, jwtService, configService) {
         this.userService = userService;
@@ -37,7 +38,18 @@ let AuthService = class AuthService {
         }
     }
     async signin(payload) {
-        return { ...payload };
+        const user = await this.userService.findone({
+            by: "email",
+            identifier: payload.email,
+            options: { relations: ["notifications", "stories"] },
+        });
+        if (!user)
+            throw error_handler_1.default.handleError("BadRequestException", { message: "Invalid Credentials" });
+        const isValid = await password_management_service_1.default.isValidPassword(user.encrypted_password, payload.password);
+        if (!isValid)
+            throw error_handler_1.default.handleError("BadRequestException", { message: "Invalid Credentials" });
+        const access_token = this.jwtService.sign({ id: user.id, email: user.email }, { secret: this.configService.get("secret") });
+        return { user, access_token };
     }
     async profile() {
     }

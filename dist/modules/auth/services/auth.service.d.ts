@@ -22,10 +22,9 @@ export default class AuthService {
             bio?: string;
         } & import("../../user/entities/user.entity").User;
     }>;
-    async: any;
     signin(payload: SignInDto): Promise<{
-        email: string;
-        password: string;
+        user: import("../../user/entities/user.entity").User;
+        access_token: string;
     }>;
     profile(): Promise<void>;
 }

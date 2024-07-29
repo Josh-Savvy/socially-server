@@ -5,6 +5,7 @@ import ErrorHandler from "src/helpers/error-handler";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { JwtConfig } from "src/config/jwt.config";
+import PasswordManagementService from "./password-management.service";
 
 @Injectable()
 export default class AuthService {
@@ -34,10 +35,20 @@ export default class AuthService {
 		}
 	}
 
-	async;
-
 	async signin(payload: SignInDto) {
-		return { ...payload };
+		const user = await this.userService.findone({
+			by: "email",
+			identifier: payload.email,
+			options: { relations: ["notifications", "stories"] },
+		});
+		if (!user) throw ErrorHandler.handleError("BadRequestException", { message: "Invalid Credentials" });
+		const isValid = await PasswordManagementService.isValidPassword(user.encrypted_password, payload.password);
+		if (!isValid) throw ErrorHandler.handleError("BadRequestException", { message: "Invalid Credentials" });
+		const access_token = this.jwtService.sign(
+			{ id: user.id, email: user.email },
+			{ secret: this.configService.get("secret") },
+		);
+		return { user, access_token };
 	}
 
 	async profile() {

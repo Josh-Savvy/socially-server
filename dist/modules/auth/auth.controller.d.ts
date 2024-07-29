@@ -35,7 +35,7 @@ export declare class AuthController {
         } & import("../user/entities/user.entity").User;
     }>;
     signin(input: SignInDto): Promise<{
-        email: string;
-        password: string;
+        user: import("../user/entities/user.entity").User;
+        access_token: string;
     }>;
 }
